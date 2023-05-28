@@ -1,0 +1,191 @@
+<td><button><a href="/delete-book?id=${result.id}" class="delbut" onclick="return confirm('Are you sure?')">Delete</a></button>
+<button><a href="/edit-book/${result.id}" class="delbut">Edit</a></button></td>
+              <h2>Add a Member</h2>
+              <form method="POST" action="/people">
+                  <label for="first_name">First name:</label>
+                  <input type="text" id="pname" name="first_name"><br><br>
+                  <label for="last_name">Last name:</label>
+                  <input type="text" id="plastname" name="last_name"><br><br>
+                  <label for="phone_number">Phone number:</label>
+                  <input type="text" id="phonenumber" name="phone_number"><br><br>
+                  <label for="id_number">Personal number:</label>
+                  <input type="text" id="idnumber" name="id_number"><br><br>
+                  <label for="p_member">Member:</label>
+                  <input type="text" id="member" name="p_member"><br><br>
+                  <label for="registration">Registration date:</label>
+                  <input type="date" id="registrationdate" name="registration"><br><br>
+                  <button type="submit">Add Member</button>
+                  <button type="submit" name="mpage" value="Main page">Main page</button>
+              </form>
+
+      // connection.query('INSERT INTO author (firstlast_name) VALUES (?)', [newBook.author], (err, result)=> {
+      //   if (err) {
+      //     throw err;
+      //   } else {
+      //     connection.query('SELECT id from author where firstlast_name = ?', [newBook.author], (error, results)=> {
+      //       if (error) {
+      //         console.error(error);
+      //         throw error;
+      //       } else {
+      //         console.log('Author ID:', results[0].id);
+      //         const authorId = results[0].id;
+      //         connection.query('INSERT INTO books (title, author, genre, issue_date, avalaible, amount) VALUES (?, ?, ?, ?, ?, ?)', [newBook.title, authorId, newBook.genre, newBook.issue_date, newBook.avalaible, newBook.amount], (er, re) => {
+      //           if (er) {
+      //             throw er;
+      //           } else {
+      //             res.redirect('/book');
+      //           }
+      //         });
+      //       }
+      //     }) 
+      // }
+      // });
+
+
+UPDATE fine
+SET fine_amount = 
+  CASE 
+    WHEN loan_date > fine_date THEN 5 
+    ELSE fine_amount 
+  END;
+
+CREATE EVENT update_fine_amount
+ON SCHEDULE EVERY 1 DAY
+DO
+  UPDATE loans SET fine_amount = 10
+  WHERE fine_date < CURDATE() AND fine_amount = 0;
+
+
+
+
+
+
+
+
+
+
+
+
+app.post('/book', (req, res) => {
+  const mpage = req.body.mpage;
+  if (mpage === 'Main page') {
+    res.redirect('/main');
+  } else {
+    const { bookTitle, bookAuthor, issueDate, avalaible, quantity, genre } = req.body;
+    const newBook = {
+      title: bookTitle,
+      author: bookAuthor,
+      genre: genre,
+      issue_date: issueDate,
+      avalaible: avalaible,
+      amount: quantity,
+    };
+    // Check if author already exists in the author table
+    connection.query('SELECT id FROM author WHERE firstlast_name = ?', [newBook.author], (error, results) => {
+      if (error) {
+        throw error;
+      } else if (results.length > 0) {
+        // If author exists, use the retrieved author_id to insert the book information into the books table
+        const authorId = results[0].id;
+        connection.query('SELECT id FROM genre WHERE genre = ?', [newBook.genre], (err, resu) => {
+          if (err) {
+            throw err;
+          } else if (resu.length > 0) {
+            const genreId = resu[0].id;
+            connection.query('INSERT INTO books (title, author, genre, issue_date, avalaible, amount) VALUES (?, ?, ?, ?, ?, ?)', [newBook.title, authorId, genreId, newBook.issue_date, newBook.avalaible, newBook.amount], (erora, resulta) => {
+              if (erora) {
+                throw erora;
+              } else {
+                res.redirect('/book');
+              }
+            });
+          } else {
+            // If genre does not exist, insert the genre into the genre table and retrieve the inserted genre's id to insert the book information into the books table
+            connection.query('INSERT INTO genre (genre) VALUES (?)', [newBook.genre], (errr, resu) => {
+              if (errr) {
+                throw errr;
+              } else {
+                const genreId = resu.insertId;
+                connection.query('INSERT INTO books (title, author, genre, issue_date, avalaible, amount) VALUES (?, ?, ?, ?, ?, ?)', [newBook.title, authorId, genreId, newBook.issue_date, newBook.avalaible, newBook.amount], (erora, resulta) => {
+                  if (erora) {
+                    throw erora;
+                  } else {
+                    res.redirect('/book');
+                  }
+                });
+              }
+            });
+          }
+        });
+      } else {
+        // If author does not exist, insert the author into the author table and retrieve the inserted author's id to insert the book information into the books table
+        connection.query('INSERT INTO author (firstlast_name) VALUES (?)', [newBook.author], (errrori, Result) => {
+          if (errrori) {
+            throw errrori;
+          } else {
+            const authorId = Result.insertId;
+            connection.query('SELECT id FROM genre WHERE genre = ?', [newBook.genre], (err, resu) => {
+              if (err) {
+                throw err;
+              } else if (resu.length > 0) {
+                const genreId = resu[0].id;
+                connection.query('INSERT INTO books (title, author, genre, issue_date, avalaible, amount) VALUES (?, ?, ?, ?, ?, ?)', [newBook.title, authorId, genreId, newBook.issue_date, newBook.av
+
+
+
+
+
+
+
+book_author.author_id
+
+const book = `SELECT 
+    book.title AS title, 
+    author.name AS author, 
+    category.category_name AS category, 
+    book.publication_date,
+    book.copies_owned,
+    FROM book
+    JOIN author
+    ON book_author.author_id = author.id
+    JOIN author
+    JOIN category.id
+    ON book.category_id = category.category_id;
+
+
+
+    query = `SELECT books.id, 
+    books.title AS title, 
+    author.firstlast_name AS author, 
+    genre.genre AS genre, 
+    books.issue_date,
+    books.avalaible, 
+    books.amount,
+    books.cover
+    FROM books
+    LEFT JOIN author
+    ON books.author = author.id
+    LEFT JOIN genre
+    ON books.genre = genre.id;
+    `
+
+
+    <div class="container">
+                <button type="submit" class="btn" onclick="openpopup()">Add Genre</button>
+                <form method="POST" action="addgenre">
+                  <div class="popup" id="popup">
+                    <input type="text" id="Genrename" placeholder="Genre name" name="Genrename"><br><br>
+                    <button type="submit" onclick="closepopup()">Add Genre</button>
+                </form>
+                <button type="submit" onclick="closepopup()">Close</button>
+            
+
+
+
+              function openpopup(){
+                popup.classList.add("openpopup");
+              }
+            
+              function closepopup(){
+                popup.classList.remove("openpopup");
+              }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <title>library</title>
+</head>
+<body>
+    <div class="buttons">
+        <a href="http://localhost:6060/book"><button>view books table</button></a>
+        <hr>
+        <a href="http://localhost:6060/people"><button>view people table</button></a>
+        <hr>
+        <a href="http://localhost:6060/reservation"><button name="ress">view reservation table</button></a>
+        <hr>
+        <a href="http://localhost:6060/book reservation"><button name="ress">Reserve a book</button></a>
+        <hr>
+    </div>
+    <div class="search">
+        <form method="POST" action="/main">
+            <input type="text" name="inputField">
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
